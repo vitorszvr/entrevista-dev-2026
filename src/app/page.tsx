@@ -1,5 +1,6 @@
 import { ProductCard } from '@/components/ProductCard';
 import { Product } from '@/types';
+import { SearchBar } from '@/components/SearchBar';
 
 async function getProducts() {
   const res = await fetch('http://localhost:3000/api/products', {
@@ -9,12 +10,26 @@ async function getProducts() {
   return res.json();
 }
 
-export default async function Home() {
-  const products: Product[] = await getProducts();
+export default async function Home(props: {
+  searchParams?: Promise<{ q?: string }>;
+}) {
+  const searchParams = await props.searchParams;
+  const query = searchParams?.q || '';
+
+  const allProducts: Product[] = await getProducts();
+
+  const products = allProducts.filter((product) => {
+    const term = query.toLowerCase();
+    return (
+      product.name.toLowerCase().includes(term) ||
+      product.category.toLowerCase().includes(term) ||
+      product.description.toLowerCase().includes(term)
+    );
+  });
 
   return (
     <div className="min-h-screen bg-white">
-      <section className="py-20 px-4 border-gray-200">
+      <section className="pt-10 pb-16 px-4 border-gray-200">
         <div className="container mx-auto">
           <h1 className="font-mono font-bold text-sm text-emerald-600 mb-3 flex items-center gap-2">
             <span>~/loja $</span>
@@ -40,6 +55,8 @@ export default async function Home() {
         </div>
       </section>
 
+      <SearchBar />
+
       <section className="border-b border-gray-200">
         <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 border-t border-l border-gray-200">
           {products.map((product) => (
@@ -50,6 +67,14 @@ export default async function Home() {
               <ProductCard product={product} />
             </div>
           ))}
+
+          {products.length === 0 && (
+            <div className="col-span-full py-20 text-center">
+              <p className="font-mono text-gray-400">
+                Nenhum item encontrado para "{query}"
+              </p>
+            </div>
+          )}
         </div>
 
         <div className="py-8 text-center bg-gray-50/30">
