@@ -19,7 +19,7 @@ export function SearchBar() {
 
   return (
     <div className="w-full mb-4 relative z-20">
-      <div className="bg-gray-50 border border-gray-200 hover:bg-gray-90 transition-colors flex items-center h-12 px-4">
+      <div className="bg-stone-200/40 border border-gray-200 transition-colors flex items-center h-12 px-4">
         <Search className="w-4 h-4 text-gray-500 shrink-0" />
 
         <input
