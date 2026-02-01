@@ -29,7 +29,7 @@ export default async function Home(props: {
 
   return (
     <div className="min-h-screen bg-white">
-      <section className="pt-10 pb-16 px-4 border-gray-200">
+      <section className="pt-10 pb-16 px-4 sm:px-6 lg:px-8 border-gray-200">
         <div className="container mx-auto">
           <h1 className="font-mono font-bold text-sm text-emerald-600 mb-3 flex items-center gap-2">
             <span>~/loja $</span>
@@ -77,7 +77,7 @@ export default async function Home(props: {
           )}
         </div>
 
-        <div className="py-8 text-center bg-gray-50/30">
+        <div className="py-8 text-center">
           <p className="font-mono text-[10px] text-gray-500 uppercase tracking-widest">
             Fim da lista • {products.length} produtos carregados
           </p>
