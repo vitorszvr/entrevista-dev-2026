@@ -1,12 +1,17 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { Product } from '@/types';
+import { useCart } from '@/contexts/CartContext';
 
 interface ProductCardProps {
   product: Product;
 }
 
 export function ProductCard({ product }: ProductCardProps) {
+  const { addToCart } = useCart();
+
   const formattedPrice = new Intl.NumberFormat('pt-BR', {
     style: 'currency',
     currency: 'BRL',
@@ -14,10 +19,15 @@ export function ProductCard({ product }: ProductCardProps) {
     maximumFractionDigits: 2,
   }).format(product.price);
 
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault(); // Impede que o clique abra a página do produto
+    addToCart(product); // Adiciona e abre o carrinho
+  };
+
   return (
     <Link
       href={`/products/${product.id}`}
-      className="group block bg-white h-full relative overflow-hidden hover:z-10"
+      className="group block bg-stone-50 h-full relative overflow-hidden hover:z-10"
     >
       <div className="absolute inset-0 border border-transparent group-hover:border-gray-200 transition-colors duration-200 pointer-events-none z-20" />
 
@@ -40,12 +50,19 @@ export function ProductCard({ product }: ProductCardProps) {
             {product.name}
           </h3>
 
-          <div className="flex items-center justify-between pt-2">
+          {/* MANTIVE O DESIGN ORIGINAL AQUI.
+            Apenas adicionei 'flex-wrap' e 'gap-2' para o botão não "bugar" em telas pequenas,
+            sem mudar a aparência padrão.
+          */}
+          <div className="flex flex-wrap items-center justify-between pt-2 gap-2">
             <p className="font-mono text-sm text-black font-medium tracking-tight">
               {formattedPrice}
             </p>
 
-            <button className="text-[10px] font-mono font-bold bg-gray-100 hover:bg-[#f3350c] hover:text-white px-3 py-1 transition-colors uppercase tracking-wider">
+            <button
+              onClick={handleAddToCart}
+              className="cursor-pointer text-[10px] font-mono font-bold bg-stone-200/50 hover:bg-[#f3350c] hover:text-white px-3 py-1 transition-colors uppercase tracking-wider z-30 relative shrink-0"
+            >
               [ + ADD ]
             </button>
           </div>

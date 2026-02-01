@@ -4,6 +4,8 @@ import './globals.css';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { PromoBanner } from '@/components/PromoBanner';
+import { CartProvider } from '@/contexts/CartContext';
+import { CartSidebar } from '@/components/CartSidebar'; // Novo
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -22,12 +24,15 @@ export default function RootLayout({
       <body
         className={`${inter.className} bg-gray-50 text-gray-900 flex flex-col min-h-screen`}
       >
-        <PromoBanner />
-        <Header />
-        <main className="flex-grow container mx-auto px-6 sm:px-8 lg:px-12 py-8">
-          {children}
-        </main>
-        <Footer />
+        <CartProvider>
+          <CartSidebar /> {/* Sidebar injetada aqui */}
+          <PromoBanner />
+          <Header />
+          <main className="flex-grow container mx-auto px-6 sm:px-8 lg:px-12 py-8">
+            {children}
+          </main>
+          <Footer />
+        </CartProvider>
       </body>
     </html>
   );

@@ -4,7 +4,7 @@
 @tailwind utilities;
 
 body {
-  @apply bg-white text-black antialiased;
+  @apply bg-stone-50 text-black antialiased;
 }
 
 .btn,
@@ -36,4 +36,18 @@ body {
 
 .animate-terminal-blink {
   animation: blink 1s infinite;
+}
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-in {
+  animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }

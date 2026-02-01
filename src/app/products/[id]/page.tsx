@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import products from '@/data/products.json';
 import { Metadata } from 'next';
+import { AddToCartButton } from '@/components/AddToCartButton';
 
 export async function generateMetadata(props: {
   params: Promise<{ id: string }>;
@@ -42,7 +43,8 @@ export default async function ProductPage(props: {
   }).format(product.price);
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    /* MUDANÇA: bg-stone-50 */
+    <div className="min-h-screen bg-stone-50 flex flex-col">
       <div className="py-8 md:py-12">
         <h1 className="font-mono text-sm md:text-base flex flex-wrap items-center gap-2">
           <Link
@@ -51,16 +53,14 @@ export default async function ProductPage(props: {
           >
             ~/loja/ESSENCIAIS
           </Link>
-
           <span className="text-gray-400">cat</span>
-
           <span className="text-black font-medium">'{product.name}'</span>
-
           <span className="animate-terminal-blink bg-emerald-600 w-2 h-4 md:h-5 block ml-1"></span>
         </h1>
       </div>
 
-      <section className="border-t border-b border-gray-200 grid grid-cols-1 lg:grid-cols-2 bg-white">
+      {/* MUDANÇA: bg-stone-50 */}
+      <section className="border-t border-b border-gray-200 grid grid-cols-1 lg:grid-cols-2 bg-stone-50">
         <div className="relative aspect-square lg:aspect-auto lg:h-[600px] border-b lg:border-b-0 lg:border-r border-gray-200 p-8 md:p-12 flex items-center justify-center bg-gray-50/30">
           <div className="relative w-full h-full max-w-md max-h-md">
             <Image
@@ -73,7 +73,8 @@ export default async function ProductPage(props: {
           </div>
         </div>
 
-        <div className="p-6 sm:p-8 lg:p-12 flex flex-col justify-center bg-white">
+        {/* MUDANÇA: bg-stone-50 */}
+        <div className="p-6 sm:p-8 lg:p-12 flex flex-col justify-center bg-stone-50">
           <div className="flex justify-between items-start mb-6">
             <span className="font-mono text-xs uppercase tracking-widest text-emerald-600 border border-emerald-200 bg-emerald-50 px-2 py-1">
               {product.category}
@@ -113,9 +114,7 @@ export default async function ProductPage(props: {
             </div>
           </div>
 
-          <button className="w-full bg-black hover:bg-[#f3350c] text-white font-mono font-bold py-5 transition-all duration-300 uppercase tracking-widest text-sm flex items-center justify-center gap-3 group">
-            <span>[ Adicionar ao Setup ]</span>
-          </button>
+          <AddToCartButton product={product} />
         </div>
       </section>
 

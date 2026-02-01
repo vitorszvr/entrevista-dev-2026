@@ -28,7 +28,8 @@ export default async function Home(props: {
   });
 
   return (
-    <div className="min-h-screen bg-white">
+    /* MUDANÇA: bg-stone-50 */
+    <div className="min-h-screen bg-stone-50">
       <section className="pt-10 pb-16 border-gray-200">
         <div className="flex flex-col">
           <h1 className="font-mono font-bold text-sm text-emerald-600 mb-3 flex items-center gap-2">
@@ -76,7 +77,7 @@ export default async function Home(props: {
           )}
         </div>
 
-        <div className="py-8 text-center bg-gray-50/30 border-t border-gray-200">
+        <div className="py-8 text-center  border-t border-gray-200">
           <p className="font-mono text-[10px] text-gray-500 uppercase tracking-widest">
             Fim da lista • {products.length} produtos carregados
           </p>
