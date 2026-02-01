@@ -29,8 +29,8 @@ export default async function Home(props: {
 
   return (
     <div className="min-h-screen bg-white">
-      <section className="pt-10 pb-16 px-4 sm:px-6 lg:px-8 border-gray-200">
-        <div className="container mx-auto">
+      <section className="pt-10 pb-16 border-gray-200">
+        <div className="flex flex-col">
           <h1 className="font-mono font-bold text-sm text-emerald-600 mb-3 flex items-center gap-2">
             <span>~/loja $</span>
           </h1>
@@ -56,8 +56,7 @@ export default async function Home(props: {
       </section>
 
       <SearchBar />
-
-      <section className="border-b border-gray-200">
+      <section className="border-b border-gray-200 mb-20">
         <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 border-t border-l border-gray-200">
           {products.map((product) => (
             <div
@@ -69,7 +68,7 @@ export default async function Home(props: {
           ))}
 
           {products.length === 0 && (
-            <div className="col-span-full py-20 text-center">
+            <div className="col-span-full py-20 text-center border-r border-b border-gray-200">
               <p className="font-mono text-gray-400">
                 Nenhum item encontrado para "{query}"
               </p>
@@ -77,7 +76,7 @@ export default async function Home(props: {
           )}
         </div>
 
-        <div className="py-8 text-center">
+        <div className="py-8 text-center bg-gray-50/30 border-t border-gray-200">
           <p className="font-mono text-[10px] text-gray-500 uppercase tracking-widest">
             Fim da lista • {products.length} produtos carregados
           </p>
