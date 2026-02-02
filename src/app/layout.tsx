@@ -6,6 +6,7 @@ import { Footer } from '@/components/Footer';
 import { PromoBanner } from '@/components/PromoBanner';
 import { CartProvider } from '@/contexts/CartContext';
 import { CartSidebar } from '@/components/CartSidebar';
+import { Toast } from '@/components/Toast';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -25,6 +26,7 @@ export default function RootLayout({
         className={`${inter.className} bg-gray-50 text-gray-900 flex flex-col min-h-screen`}
       >
         <CartProvider>
+          <Toast />
           <CartSidebar />
           <PromoBanner />
           <Header />
