@@ -1,14 +1,7 @@
 import { ProductCard } from '@/components/ProductCard';
 import { Product } from '@/types';
 import { SearchBar } from '@/components/SearchBar';
-
-async function getProducts() {
-  const res = await fetch('http://localhost:3000/api/products', {
-    cache: 'no-store',
-  });
-  if (!res.ok) throw new Error('Falha ao carregar');
-  return res.json();
-}
+import productsData from '@/data/products.json';
 
 export default async function Home(props: {
   searchParams?: Promise<{ q?: string }>;
@@ -16,7 +9,7 @@ export default async function Home(props: {
   const searchParams = await props.searchParams;
   const query = searchParams?.q || '';
 
-  const allProducts: Product[] = await getProducts();
+  const allProducts: Product[] = productsData;
 
   const products = allProducts.filter((product) => {
     const term = query.toLowerCase();
