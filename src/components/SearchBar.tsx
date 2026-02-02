@@ -2,12 +2,12 @@
 
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { Search } from 'lucide-react';
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Product } from '@/types';
 
-export function SearchBar({ className = '' }: { className?: string }) {
+function SearchBarContent({ className = '' }: { className?: string }) {
   const searchParams = useSearchParams();
   const { replace } = useRouter();
   const pathname = usePathname();
@@ -39,7 +39,7 @@ export function SearchBar({ className = '' }: { className?: string }) {
       const filtered = products.filter((p) =>
         p.name.toLowerCase().includes(term.toLowerCase()),
       );
-      setResults(filtered.slice(0, 5)); // Limita a 5 itens
+      setResults(filtered.slice(0, 5));
       setIsOpen(true);
     } catch (error) {
       console.error(error);
@@ -59,7 +59,6 @@ export function SearchBar({ className = '' }: { className?: string }) {
           className="flex-1 bg-transparent border-none outline-none font-mono text-xs md:text-sm text-emerald-700 ml-3 h-full placeholder:text-gray-400 w-full min-w-0"
           autoComplete="off"
           spellCheck={false}
-          // Fecha o dropdown com um pequeno delay ao clicar fora/perder foco
           onBlur={() => setTimeout(() => setIsOpen(false), 200)}
         />
       </div>
@@ -76,19 +75,21 @@ export function SearchBar({ className = '' }: { className?: string }) {
                   href={`/products/${product.id}`}
                   className="flex items-center gap-4 p-4 hover:bg-stone-50 transition-colors"
                 >
-                  <div className="relative w-10 h-10 bg-stone-50 border border-gray-100 shrink-0">
+                  <div className="relative w-10 h-10 shrink-0">
                     <Image
                       src={product.image}
                       alt={product.name}
                       fill
-                      className="object-contain p-1"
+                      className="object-contain"
                     />
                   </div>
+
                   <div className="flex justify-between items-center w-full min-w-0">
                     <span className="text-sm font-medium text-gray-900 truncate pr-4">
                       {product.name}
                     </span>
-                    <span className="text-xs font-mono text-emerald-600 shrink-0">
+
+                    <span className="text-xs font-mono text-emerald-700 bg-stone-200/40 px-2 py-1 rounded shrink-0">
                       {new Intl.NumberFormat('pt-BR', {
                         style: 'currency',
                         currency: 'BRL',
@@ -102,5 +103,19 @@ export function SearchBar({ className = '' }: { className?: string }) {
         </div>
       )}
     </div>
+  );
+}
+
+export function SearchBar(props: { className?: string }) {
+  return (
+    <Suspense
+      fallback={
+        <div
+          className={`h-10 md:h-12 bg-stone-200/40 border border-gray-200 ${props.className || ''}`}
+        />
+      }
+    >
+      <SearchBarContent {...props} />
+    </Suspense>
   );
 }
