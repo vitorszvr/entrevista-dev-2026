@@ -28,9 +28,8 @@ export default async function Home(props: {
   });
 
   return (
-    /* MUDANÇA: bg-stone-50 */
     <div className="min-h-screen bg-stone-50">
-      <section className="pt-10 pb-16 border-gray-200">
+      <section className="pt-10 pb-12 md:pb-16 border-gray-200">
         <div className="flex flex-col">
           <h1 className="font-mono font-bold text-sm text-emerald-600 mb-3 flex items-center gap-2">
             <span>~/loja $</span>
@@ -42,23 +41,26 @@ export default async function Home(props: {
             </span>
 
             <div className="flex items-center">
-              <h2 className="text-5xl md:text-6xl font-medium tracking-tighter text-black">
+              <h2 className="text-4xl md:text-6xl font-medium tracking-tighter text-black">
                 ESSENCIAIS
               </h2>
-              <span className="animate-terminal-blink bg-emerald-600 w-[4px] h-10 md:h-16 block ml-4 "></span>
+              <span className="animate-terminal-blink bg-emerald-600 w-[4px] h-8 md:h-16 block ml-2 md:ml-4 "></span>
             </div>
           </div>
 
-          <p className="text-gray-500 max-w-none text-base leading-relaxed font-light lg:whitespace-nowrap">
+          <p className="text-gray-500 max-w-none text-sm md:text-base leading-relaxed font-light lg:whitespace-nowrap">
             Curadoria de itens essenciais para o seu setup: do hardware de alta
             performance à caneca do café sagrado.
           </p>
         </div>
       </section>
 
-      <SearchBar />
+      {/* Busca da Home (com margem adicionada aqui) */}
+      <SearchBar className="mb-8 w-full" />
+
       <section className="border-b border-gray-200 mb-20">
-        <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 border-t border-l border-gray-200">
+        {/* MUDANÇA: grid-cols-2 no mobile (antes era grid-cols-1) */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 border-t border-l border-gray-200">
           {products.map((product) => (
             <div
               key={product.id}
@@ -77,7 +79,7 @@ export default async function Home(props: {
           )}
         </div>
 
-        <div className="py-8 text-center  border-t border-gray-200">
+        <div className="py-8 text-center bg-gray-50/30 border-t border-gray-200">
           <p className="font-mono text-[10px] text-gray-500 uppercase tracking-widest">
             Fim da lista • {products.length} produtos carregados
           </p>

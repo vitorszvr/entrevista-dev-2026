@@ -55,7 +55,6 @@ export function CartSidebar() {
             </div>
           ) : (
             cart.map((item) => {
-              // Verifica se atingiu o limite
               const isMaxStock = item.quantity >= item.stock;
 
               return (
@@ -89,7 +88,7 @@ export function CartSidebar() {
 
                           <button
                             onClick={() => addToCart(item)}
-                            disabled={isMaxStock} // Desabilita se cheio
+                            disabled={isMaxStock}
                             className={`p-1 transition-colors cursor-pointer ${
                               isMaxStock
                                 ? 'opacity-30 cursor-not-allowed'

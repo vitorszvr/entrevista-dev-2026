@@ -2,21 +2,25 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 import { ShoppingBag } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
+import { SearchBar } from './SearchBar';
 
 export function Header() {
   const { cartCount, openCart } = useCart();
+  const pathname = usePathname();
+
+  const showSearch = pathname !== '/';
 
   return (
-    /* MUDANÇA: bg-stone-50 */
-    <header className="sticky top-0 z-50 w-full bg-stone-50 border-b border-gray-200">
-      <div className="container mx-auto px-6 sm:px-8 lg:px-12 h-16 flex items-center justify-between">
+    <header className="sticky top-0 z-50 w-full bg-stone-50 border-b border-gray-200 h-16">
+      <div className="container mx-auto px-4 sm:px-8 lg:px-12 h-full flex items-center justify-between gap-4">
         <Link
           href="/"
-          className="flex items-center gap-3 transition-opacity group cursor-pointer"
+          className="flex items-center gap-2 md:gap-3 transition-opacity group cursor-pointer shrink-0"
         >
-          <div className="relative w-8 h-8">
+          <div className="relative w-6 h-6 md:w-8 md:h-8">
             <Image
               src="/logo.svg"
               alt="DEPLOY Logo"
@@ -25,23 +29,46 @@ export function Header() {
               priority
             />
           </div>
-
-          <span className="text-xl font-mono font-bold tracking-tighter text-black group-hover:text-emerald-600 transition-colors mt-1">
-            DEPLOY<span className="text-gray-400 font-light">.store</span>
+          <span className="text-lg md:text-xl font-mono font-bold tracking-tighter text-black group-hover:text-emerald-600 transition-colors mt-1">
+            DEPLOY
+            <span className="text-gray-400 font-light hidden sm:inline">
+              .store
+            </span>
           </span>
         </Link>
 
+        {showSearch && (
+          <div className="flex-1 max-w-md mx-auto fade-in hidden md:block">
+            <SearchBar className="w-full" />
+          </div>
+        )}
+
         <button
           onClick={openCart}
-          className="flex items-center gap-2 hover:opacity-70 transition-opacity p-2 -mr-2 cursor-pointer"
+          className="relative flex items-center gap-2 hover:opacity-70 transition-opacity p-2 -mr-2 cursor-pointer"
           aria-label="Abrir carrinho"
         >
           <span className="text-xs font-mono font-medium hidden sm:block">
-            CART [{cartCount}]
+            CARRINHO [{cartCount}]
           </span>
-          <ShoppingBag className="w-5 h-5 text-black" strokeWidth={1.5} />
+
+          <div className="relative">
+            <ShoppingBag className="w-6 h-6 text-black" strokeWidth={1.5} />
+
+            {cartCount > 0 && (
+              <span className="absolute -top-1 -right-1 bg-emerald-600 text-white text-[9px] font-bold font-mono w-4 h-4 flex items-center justify-center rounded-full sm:hidden">
+                {cartCount}
+              </span>
+            )}
+          </div>
         </button>
       </div>
+
+      {showSearch && (
+        <div className="md:hidden border-t border-gray-200 bg-stone-50 px-4 py-2">
+          <SearchBar className="w-full" />
+        </div>
+      )}
     </header>
   );
 }

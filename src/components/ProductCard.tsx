@@ -50,10 +50,6 @@ export function ProductCard({ product }: ProductCardProps) {
             {product.name}
           </h3>
 
-          {/* MANTIVE O DESIGN ORIGINAL AQUI.
-            Apenas adicionei 'flex-wrap' e 'gap-2' para o botão não "bugar" em telas pequenas,
-            sem mudar a aparência padrão.
-          */}
           <div className="flex flex-wrap items-center justify-between pt-2 gap-2">
             <p className="font-mono text-sm text-black font-medium tracking-tight">
               {formattedPrice}
