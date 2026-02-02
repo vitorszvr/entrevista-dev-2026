@@ -89,7 +89,7 @@ export default async function ProductPage(props: {
             {formattedPrice}
           </div>
 
-          <p className="text-gray-600 leading-relaxed mb-10 border-l-2 border-gray-200 pl-4">
+          <p className="text-gray-600 leading-relaxed mb-10 border-l-2 border-gray-200 pl-4 text-justify">
             {product.description}
           </p>
 

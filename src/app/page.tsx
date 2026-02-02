@@ -48,18 +48,16 @@ export default async function Home(props: {
             </div>
           </div>
 
-          <p className="text-gray-500 max-w-none text-sm md:text-base leading-relaxed font-light lg:whitespace-nowrap">
+          <p className="text-gray-500 text-sm md:text-base leading-relaxed text-justify">
             Curadoria de itens essenciais para o seu setup: do hardware de alta
             performance à caneca do café sagrado.
           </p>
         </div>
       </section>
 
-      {/* Busca da Home (com margem adicionada aqui) */}
       <SearchBar className="mb-8 w-full" />
 
       <section className="border-b border-gray-200 mb-20">
-        {/* MUDANÇA: grid-cols-2 no mobile (antes era grid-cols-1) */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 border-t border-l border-gray-200">
           {products.map((product) => (
             <div
