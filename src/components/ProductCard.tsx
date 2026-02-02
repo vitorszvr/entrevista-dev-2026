@@ -20,8 +20,8 @@ export function ProductCard({ product }: ProductCardProps) {
   }).format(product.price);
 
   const handleAddToCart = (e: React.MouseEvent) => {
-    e.preventDefault(); // Impede que o clique abra a página do produto
-    addToCart(product); // Adiciona e abre o carrinho
+    e.preventDefault();
+    addToCart(product);
   };
 
   return (

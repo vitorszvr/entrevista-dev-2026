@@ -77,7 +77,7 @@ export default async function Home(props: {
           )}
         </div>
 
-        <div className="py-8 text-center bg-gray-50/30 border-t border-gray-200">
+        <div className="py-8 text-center bg-gray-50/30">
           <p className="font-mono text-[10px] text-gray-500 uppercase tracking-widest">
             Fim da lista • {products.length} produtos carregados
           </p>
