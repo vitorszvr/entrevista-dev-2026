@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { ShoppingBag } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { SearchBar } from './SearchBar';
+import { Suspense } from 'react';
 
 export function Header() {
   const { cartCount, openCart } = useCart();
@@ -39,7 +40,13 @@ export function Header() {
 
         {showSearch && (
           <div className="flex-1 max-w-md mx-auto fade-in hidden md:block">
-            <SearchBar className="w-full" />
+            <Suspense
+              fallback={
+                <div className="w-full h-10 bg-gray-100 rounded animate-pulse" />
+              }
+            >
+              <SearchBar className="w-full" />
+            </Suspense>
           </div>
         )}
 
