@@ -6,18 +6,21 @@ import {
   useState,
   useEffect,
   ReactNode,
+  useRef,
 } from 'react';
 import { Product, CartItem } from '@/types';
 
 interface CartContextType {
   cart: CartItem[];
-  addToCart: (product: Product) => void;
+  addToCart: (product: Product, options?: { silent?: boolean }) => void;
   decreaseQuantity: (productId: number) => void;
   removeFromCart: (productId: number) => void;
   cartCount: number;
   isCartOpen: boolean;
   openCart: () => void;
   closeCart: () => void;
+  toastMessage: string | null;
+  hideToast: () => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -25,6 +28,9 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export function CartProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const savedCart = localStorage.getItem('deploy-cart');
@@ -37,14 +43,33 @@ export function CartProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('deploy-cart', JSON.stringify(cart));
   }, [cart]);
 
-  const addToCart = (product: Product) => {
+  const showToast = (message: string) => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+
+    setToastMessage(message);
+
+    timeoutRef.current = setTimeout(() => {
+      setToastMessage(null);
+    }, 3000);
+  };
+
+  const hideToast = () => {
+    setToastMessage(null);
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+  };
+
+  // Alterado: recebe options
+  const addToCart = (product: Product, options?: { silent?: boolean }) => {
     setCart((prev) => {
       const itemExists = prev.find((item) => item.id === product.id);
 
       if (itemExists) {
-        // TRAVA DE ESTOQUE: Se já tem o máximo, não aumenta
         if (itemExists.quantity >= product.stock) {
+          showToast(`Estoque máximo atingido para ${product.name}!`);
           return prev;
+        }
+        if (!options?.silent) {
+          showToast(`+1 ${product.name} adicionado!`);
         }
 
         return prev.map((item) =>
@@ -54,10 +79,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
         );
       }
 
-      // Se não existe, adiciona (assumindo que estoque > 0)
+      if (!options?.silent) {
+        showToast(`${product.name} adicionado ao setup!`);
+      }
+
       return [...prev, { ...product, quantity: 1 }];
     });
-    setIsCartOpen(true);
   };
 
   const decreaseQuantity = (productId: number) => {
@@ -93,6 +120,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
         isCartOpen,
         openCart,
         closeCart,
+        toastMessage,
+        hideToast,
       }}
     >
       {children}
