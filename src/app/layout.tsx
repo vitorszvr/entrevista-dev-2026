@@ -7,6 +7,7 @@ import { PromoBanner } from '@/components/PromoBanner';
 import { CartProvider } from '@/contexts/CartContext';
 import { CartSidebar } from '@/components/CartSidebar';
 import { Toast } from '@/components/Toast';
+import { Chatbot } from '@/components/Chatbot';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -28,6 +29,7 @@ export default function RootLayout({
         <CartProvider>
           <Toast />
           <CartSidebar />
+          <Chatbot />
           <PromoBanner />
           <Header />
           <main className="flex-grow container mx-auto px-6 sm:px-8 lg:px-12 py-8">

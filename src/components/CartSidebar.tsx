@@ -109,9 +109,7 @@ export function CartSidebar() {
           {cart.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-center opacity-50">
               <ShoppingBag className="w-12 h-12 mb-4 text-gray-300" />
-              <p className="font-mono text-sm text-gray-400">
-                Carrinho vazio...
-              </p>
+              <p className="font-mono text-sm text-gray-400">Carrinho vazio</p>
             </div>
           ) : (
             cart.map((item) => {
