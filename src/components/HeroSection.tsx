@@ -6,7 +6,7 @@ import productsData from '@/data/products.json';
 import { ArrowRight } from 'lucide-react';
 
 export function HeroSection() {
-  const { addToCart, openCart, showToast, applyCoupon } = useCart();
+  const { addToCart, openCart, applyCoupon } = useCart();
 
   const KIT_ITEMS = [1, 2];
 
@@ -26,7 +26,7 @@ export function HeroSection() {
 
   return (
     <section className="pt-2 md:pt-8 pb-8 md:pb-12 border-gray-200">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-center">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
         <div className="flex flex-col">
           <h1 className="font-mono font-bold text-sm text-emerald-600 mb-1 md:mb-3 flex items-center gap-2">
             <span>~/loja $</span>
@@ -60,14 +60,14 @@ export function HeroSection() {
           onClick={handleBuyKit}
           className="relative group cursor-pointer w-full"
         >
-          <div className="relative w-full aspect-video md:aspect-square lg:aspect-[4/3] bg-gray-200 rounded-none overflow-hidden shadow-sm group-hover:shadow-xl transition-all duration-300">
+          <div className="relative w-full aspect-video md:aspect-[4/3] bg-gray-200 rounded-none overflow-hidden shadow-sm group-hover:shadow-xl transition-all duration-300">
             <Image
               src="/kit.png"
               alt="Kit Dev Starter no Setup"
               fill
               className="object-cover object-right lg:object-center transition-transform duration-700 group-hover:scale-105"
               priority
-              sizes="(max-width: 768px) 100vw, 50vw"
+              sizes="(max-width: 1024px) 100vw, 50vw"
             />
             <div className="absolute inset-0 bg-black/5 group-hover:bg-black/0 transition-colors duration-300" />
           </div>
@@ -75,8 +75,12 @@ export function HeroSection() {
             className="
             relative z-20 bg-stone-50 p-6 border border-gray-200
             transition-transform duration-300 hover:translate-x-1 hover:-translate-y-1
-            mt-0 w-full shadow-sm
-            lg:absolute lg:bottom-12 lg:-left-12 lg:w-[320px] lg:mt-0 lg:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]
+            
+            mt-0 w-full shadow-sm md:max-w-lg md:mx-auto md:shadow-md
+          
+            lg:absolute lg:bottom-8 lg:-left-6 lg:w-[280px] lg:mt-0 lg:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] lg:mx-0
+
+            xl:bottom-12 xl:-left-12 xl:w-[320px]
           "
           >
             <div className="flex justify-between items-start mb-4">
