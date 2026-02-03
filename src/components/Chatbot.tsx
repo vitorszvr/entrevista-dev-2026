@@ -13,6 +13,7 @@ import productsData from '@/data/products.json';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Product } from '@/types';
+import { useCart } from '@/contexts/CartContext';
 
 interface Message {
   id: string;
@@ -34,7 +35,33 @@ interface ConversationContext {
 }
 
 export function Chatbot() {
+  const { isCartOpen } = useCart();
   const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    if (isCartOpen) {
+      setIsOpen(false);
+    }
+  }, [isCartOpen]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (isOpen && window.innerWidth < 768) {
+        document.body.style.overflow = 'hidden';
+      } else {
+        document.body.style.overflow = '';
+      }
+    };
+
+    handleResize();
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      document.body.style.overflow = '';
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [isOpen]);
 
   const allProducts: Product[] = productsData as Product[];
 
@@ -73,7 +100,7 @@ export function Chatbot() {
 
   useEffect(() => {
     scrollToBottom();
-    if (isOpen && inputRef.current) {
+    if (isOpen && inputRef.current && window.innerWidth >= 768) {
       setTimeout(() => inputRef.current?.focus(), 300);
     }
   }, [messages, isTyping, isOpen]);
@@ -203,7 +230,6 @@ export function Chatbot() {
 
     if (intent.type === 'category_search' && 'category' in intent) {
       const cat = (intent as any).category;
-      // Busca mais ampla na categoria
       const catProducts = allProducts.filter(
         (p) =>
           p.category.toLowerCase().includes(cat) ||
@@ -229,7 +255,6 @@ export function Chatbot() {
       };
     }
 
-    // 7. Fallback (Não encontrou nada)
     const randomSuggestions = [...allProducts]
       .sort(() => Math.random() - 0.5)
       .slice(0, 3);
@@ -288,13 +313,20 @@ export function Chatbot() {
 
   return (
     <>
+      <div
+        className={`fixed inset-0 bg-black/60 z-[59] md:hidden transition-opacity duration-300 backdrop-blur-sm
+          ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}
+        `}
+        onClick={() => setIsOpen(false)}
+      />
+
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={`fixed bottom-6 right-6 z-[60] w-14 h-14 flex items-center justify-center 
           border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)] 
           transition-all duration-200 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 active:translate-y-0 active:shadow-none
           rounded-none 
-          /* Lógica de Cor: Vermelho se aberto, Preto se fechado */
+          ${isCartOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}
           ${
             isOpen
               ? 'bg-red-600 hover:bg-red-700 text-white border-red-800'
@@ -306,7 +338,7 @@ export function Chatbot() {
       </button>
 
       <div
-        className={`fixed bottom-24 right-4 md:right-6 w-[90vw] md:w-[380px] max-w-[400px] 
+        className={`fixed bottom-24 left-4 right-4 md:left-auto md:right-6 md:w-[380px] max-w-[500px]
         bg-stone-50 border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] 
         rounded-none overflow-hidden z-[60] transition-all duration-300 origin-bottom-right flex flex-col
         ${isOpen ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-90 translate-y-10 pointer-events-none'}
@@ -339,7 +371,6 @@ export function Chatbot() {
           </button>
         </div>
 
-        {/* Mensagens */}
         <div className="flex-1 overflow-y-auto p-4 space-y-6 bg-stone-100/50 scrollbar-thin scrollbar-thumb-black scrollbar-track-transparent">
           {messages.map((msg) => (
             <div
