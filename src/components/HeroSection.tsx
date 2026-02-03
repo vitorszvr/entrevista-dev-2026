@@ -25,17 +25,12 @@ export function HeroSection() {
   };
 
   return (
-    // AJUSTE 1: Mudei pt-8 para pt-2 no mobile para subir o conteúdo
     <section className="pt-2 md:pt-8 pb-8 md:pb-12 border-gray-200">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-center">
-        {/* --- Coluna da Esquerda (Texto) --- */}
         <div className="flex flex-col">
-          {/* AJUSTE 2: Reduzi mb-3 para mb-1 no mobile */}
           <h1 className="font-mono font-bold text-sm text-emerald-600 mb-1 md:mb-3 flex items-center gap-2">
             <span>~/loja $</span>
           </h1>
-
-          {/* AJUSTE 3: Reduzi mb-6 para mb-4 no mobile */}
           <div className="flex items-center gap-2 md:gap-3 mb-4 md:mb-6">
             <span className="text-3xl md:text-4xl font-light text-gray-400">
               cd
@@ -55,20 +50,16 @@ export function HeroSection() {
             </h3>
             <p className="text-gray-600 text-sm md:text-lg leading-relaxed text-justify">
               Curadoria de itens essenciais para o seu setup
-              {/* O restante da frase aparece só no desktop */}
               <span className="hidden md:inline">
                 : do hardware de alta performance à caneca do café sagrado.
               </span>
             </p>
           </div>
         </div>
-
-        {/* --- Coluna da Direita (Imagem + Card) --- */}
         <div
           onClick={handleBuyKit}
           className="relative group cursor-pointer w-full"
         >
-          {/* Container da Imagem (Configuração aprovada anteriormente) */}
           <div className="relative w-full aspect-video md:aspect-square lg:aspect-[4/3] bg-gray-200 rounded-none overflow-hidden shadow-sm group-hover:shadow-xl transition-all duration-300">
             <Image
               src="/kit.png"
@@ -80,8 +71,6 @@ export function HeroSection() {
             />
             <div className="absolute inset-0 bg-black/5 group-hover:bg-black/0 transition-colors duration-300" />
           </div>
-
-          {/* Card de Texto */}
           <div
             className="
             relative z-20 bg-stone-50 p-6 border border-gray-200

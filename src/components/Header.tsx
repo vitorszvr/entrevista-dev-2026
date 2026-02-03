@@ -13,6 +13,7 @@ export function Header() {
   const pathname = usePathname();
 
   const showSearch = pathname !== '/';
+  const isProductPage = pathname.startsWith('/products/');
 
   return (
     <header className="sticky top-0 z-50 w-full bg-stone-50 border-b border-gray-200 h-16">
@@ -45,7 +46,7 @@ export function Header() {
                 <div className="w-full h-10 bg-gray-100 rounded animate-pulse" />
               }
             >
-              <SearchBar className="w-full" />
+              <SearchBar className="w-full" showFilter={!isProductPage} />
             </Suspense>
           </div>
         )}
@@ -73,7 +74,7 @@ export function Header() {
 
       {showSearch && (
         <div className="md:hidden border-t border-gray-200 bg-stone-50 px-4 py-2">
-          <SearchBar className="w-full" />
+          <SearchBar className="w-full" showFilter={!isProductPage} />
         </div>
       )}
     </header>

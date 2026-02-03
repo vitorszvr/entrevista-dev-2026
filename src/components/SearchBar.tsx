@@ -1,20 +1,51 @@
 'use client';
 
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
-import { Search } from 'lucide-react';
-import { useState, Suspense } from 'react';
+import { Search, Filter, Check } from 'lucide-react';
+import { useState, Suspense, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Product } from '@/types';
 
-function SearchBarContent({ className = '' }: { className?: string }) {
+const CATEGORIES = [
+  'Todos',
+  'Vestuario',
+  'Acessorios',
+  'Perifericos',
+  'Audio',
+  'Ergonomia',
+  'Monitores',
+];
+
+interface SearchBarProps {
+  className?: string;
+  showFilter?: boolean; // Nova propriedade
+}
+
+function SearchBarContent({
+  className = '',
+  showFilter = true,
+}: SearchBarProps) {
   const searchParams = useSearchParams();
   const { replace } = useRouter();
   const pathname = usePathname();
-
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const [results, setResults] = useState<Product[]>([]);
-  const [isOpen, setIsOpen] = useState(false);
-
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const currentCategory = searchParams.get('category') || 'Todos';
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsFilterOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
   const handleSearch = async (term: string) => {
     if (pathname === '/') {
       const params = new URLSearchParams(searchParams);
@@ -23,16 +54,15 @@ function SearchBarContent({ className = '' }: { className?: string }) {
       } else {
         params.delete('q');
       }
-      replace(`/?${params.toString()}`);
+      // scroll: false mantém a posição da tela
+      replace(`/?${params.toString()}`, { scroll: false });
       return;
     }
-
     if (term.length === 0) {
       setResults([]);
-      setIsOpen(false);
+      setIsSearchOpen(false);
       return;
     }
-
     try {
       const res = await fetch('/api/products');
       const products: Product[] = await res.json();
@@ -40,31 +70,89 @@ function SearchBarContent({ className = '' }: { className?: string }) {
         p.name.toLowerCase().includes(term.toLowerCase()),
       );
       setResults(filtered.slice(0, 5));
-      setIsOpen(true);
+      setIsSearchOpen(true);
     } catch (error) {
       console.error(error);
     }
   };
 
+  const handleCategorySelect = (category: string) => {
+    const params = new URLSearchParams(searchParams);
+    if (category === 'Todos') {
+      params.delete('category');
+    } else {
+      params.set('category', category);
+    }
+    replace(`/?${params.toString()}`, { scroll: false });
+    setIsFilterOpen(false);
+  };
+
   return (
-    <div className={`relative z-20 ${className}`}>
-      <div className="bg-stone-200/40 border border-gray-200 hover:bg-stone-100 transition-colors flex items-center h-10 px-3 md:h-12 md:px-4">
-        <Search className="w-4 h-4 text-gray-500 shrink-0" />
+    <div className={`relative z-20 ${className}`} ref={dropdownRef}>
+      <div className="bg-stone-200/40 border border-gray-200 hover:bg-stone-100 transition-colors flex items-center h-10 md:h-12 relative">
+        <div className="pl-3 md:pl-4 shrink-0">
+          <Search className="w-4 h-4 text-gray-500" />
+        </div>
 
         <input
           type="text"
-          placeholder="Buscar"
+          placeholder={
+            showFilter && currentCategory !== 'Todos'
+              ? `Buscar em ${currentCategory}`
+              : 'Buscar'
+          }
           onChange={(e) => handleSearch(e.target.value)}
           defaultValue={searchParams.get('q')?.toString()}
-          className="flex-1 bg-transparent border-none outline-none font-mono text-xs md:text-sm text-emerald-700 ml-3 h-full placeholder:text-gray-400 w-full min-w-0"
+          className="flex-1 bg-transparent border-none outline-none font-mono text-xs md:text-sm text-emerald-700 px-3 h-full placeholder:text-gray-400 w-full min-w-0"
           autoComplete="off"
           spellCheck={false}
-          onBlur={() => setTimeout(() => setIsOpen(false), 200)}
+          onBlur={() => setTimeout(() => setIsSearchOpen(false), 200)}
         />
+        {showFilter && (
+          <button
+            onClick={() => setIsFilterOpen(!isFilterOpen)}
+            className={`
+              h-full px-3 md:px-5 border-l border-gray-200 flex items-center justify-center gap-2 cursor-pointer transition-colors
+              ${isFilterOpen || currentCategory !== 'Todos' ? 'bg-stone-200 text-emerald-700' : 'hover:bg-gray-200 text-gray-500'}
+            `}
+            title="Filtrar"
+          >
+            <span className="font-mono text-[10px] font-bold uppercase hidden md:block">
+              {currentCategory !== 'Todos' ? currentCategory : 'Filtros'}
+            </span>
+            <Filter className="w-4 h-4" />
+          </button>
+        )}
       </div>
-
-      {pathname !== '/' && isOpen && results.length > 0 && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-100 shadow-xl rounded-sm overflow-hidden z-50">
+      {showFilter && isFilterOpen && (
+        <div className="absolute top-full right-0 mt-1 w-48 bg-white border border-gray-200 shadow-xl z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+          <div className="py-1">
+            <div className="px-3 py-2 border-b border-gray-100 bg-gray-50/50">
+              <span className="text-[10px] font-mono font-bold text-gray-400 uppercase tracking-widest">
+                Categorias
+              </span>
+            </div>
+            {CATEGORIES.map((cat) => {
+              const isActive = currentCategory === cat;
+              return (
+                <button
+                  key={cat}
+                  onClick={() => handleCategorySelect(cat)}
+                  className={`
+                    w-full text-left px-4 py-2 text-xs font-mono font-medium hover:bg-stone-50 transition-colors flex items-center justify-between
+                    ${isActive ? 'text-emerald-700 bg-emerald-50/50' : 'text-gray-700'}
+                  `}
+                >
+                  {cat}
+                  {isActive && <Check className="w-3 h-3" />}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+      {pathname !== '/' && isSearchOpen && results.length > 0 && (
+        <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-100 shadow-xl rounded-sm overflow-hidden z-40">
           <ul>
             {results.map((product) => (
               <li
@@ -83,12 +171,10 @@ function SearchBarContent({ className = '' }: { className?: string }) {
                       className="object-contain"
                     />
                   </div>
-
                   <div className="flex justify-between items-center w-full min-w-0">
                     <span className="text-sm font-medium text-gray-900 truncate pr-4">
                       {product.name}
                     </span>
-
                     <span className="text-xs font-mono text-emerald-700 bg-stone-200/40 px-2 py-1 rounded shrink-0">
                       {new Intl.NumberFormat('pt-BR', {
                         style: 'currency',
@@ -106,7 +192,7 @@ function SearchBarContent({ className = '' }: { className?: string }) {
   );
 }
 
-export function SearchBar(props: { className?: string }) {
+export function SearchBar(props: SearchBarProps) {
   return (
     <Suspense
       fallback={

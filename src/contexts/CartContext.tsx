@@ -10,7 +10,6 @@ import {
 } from 'react';
 import { Product, CartItem } from '@/types';
 
-// 1. Adicionar toastType na interface
 interface CartContextType {
   cart: CartItem[];
   addToCart: (product: Product, options?: { silent?: boolean }) => void;
@@ -21,9 +20,9 @@ interface CartContextType {
   openCart: () => void;
   closeCart: () => void;
   toastMessage: string | null;
-  toastType: 'success' | 'error'; // <--- NOVO
+  toastType: 'success' | 'error';
   hideToast: () => void;
-  showToast: (message: string, type?: 'success' | 'error') => void; // <--- ATUALIZADO
+  showToast: (message: string, type?: 'success' | 'error') => void;
   appliedCoupon: string | null;
   applyCoupon: (code: string) => boolean;
   removeCoupon: () => void;
@@ -35,7 +34,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
-  // 2. Novo estado para controlar o tipo (cor/ícone)
   const [toastType, setToastType] = useState<'success' | 'error'>('success');
 
   const [appliedCoupon, setAppliedCoupon] = useState<string | null>(null);
@@ -52,17 +50,15 @@ export function CartProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('deploy-cart', JSON.stringify(cart));
   }, [cart]);
 
-  // 3. Atualizar função showToast para receber o tipo
   const showToast = (
     message: string,
     type: 'success' | 'error' = 'success',
   ) => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
     setToastMessage(message);
-    setToastType(type); // Salva o tipo
+    setToastType(type);
     timeoutRef.current = setTimeout(() => {
       setToastMessage(null);
-      // Opcional: resetar para success depois
       setTimeout(() => setToastType('success'), 300);
     }, 3000);
   };
@@ -91,7 +87,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
       if (itemExists) {
         if (itemExists.quantity >= product.stock) {
-          // 4. AQUI MUDAMOS: Dispara toast de ERRO se atingir limite
           showToast(`Estoque máximo atingido!`, 'error');
           return prev;
         }
@@ -144,7 +139,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         openCart,
         closeCart,
         toastMessage,
-        toastType, // Exporta o tipo
+        toastType,
         hideToast,
         showToast,
         appliedCoupon,

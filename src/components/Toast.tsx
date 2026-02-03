@@ -1,11 +1,11 @@
 'use client';
 
 import { useCart } from '@/contexts/CartContext';
-import { Check, X, AlertCircle } from 'lucide-react'; // Importe AlertCircle
+import { Check, X, AlertCircle } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 export function Toast() {
-  const { toastMessage, hideToast, toastType } = useCart(); // Pegamos toastType
+  const { toastMessage, hideToast, toastType } = useCart();
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -17,8 +17,6 @@ export function Toast() {
   }, [toastMessage]);
 
   if (!toastMessage && !isVisible) return null;
-
-  // Lógica de Estilo baseada no Tipo
   const isError = toastType === 'error';
 
   return (

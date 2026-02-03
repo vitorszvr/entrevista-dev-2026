@@ -30,6 +30,7 @@ export function CartSidebar() {
 
   const [couponInput, setCouponInput] = useState('');
 
+  // Sincroniza o input com o cupom aplicado
   useEffect(() => {
     if (appliedCoupon) {
       setCouponInput(appliedCoupon);
@@ -37,6 +38,16 @@ export function CartSidebar() {
       setCouponInput('');
     }
   }, [appliedCoupon]);
+  useEffect(() => {
+    if (isCartOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isCartOpen]);
 
   const subtotal = useMemo(() => {
     return cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
@@ -74,7 +85,6 @@ export function CartSidebar() {
         }`}
         onClick={closeCart}
       />
-
       <div
         className={`relative w-full max-w-md bg-stone-50 h-full shadow-2xl flex flex-col transition-transform duration-300 ease-out ${
           isCartOpen ? 'translate-x-0' : 'translate-x-full'
@@ -213,7 +223,6 @@ export function CartSidebar() {
                 <span className="font-mono font-medium">Grátis</span>
               </div>
 
-              {/* MUDANÇA AQUI: Removi animate-pulse, bg-emerald-50, px e rounded */}
               {appliedCoupon && (
                 <div className="flex justify-between text-emerald-600">
                   <span>Desconto ({appliedCoupon})</span>
