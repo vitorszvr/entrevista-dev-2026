@@ -30,7 +30,6 @@ export function CartSidebar() {
 
   const [couponInput, setCouponInput] = useState('');
 
-  // Sincroniza o input com o cupom aplicado
   useEffect(() => {
     if (appliedCoupon) {
       setCouponInput(appliedCoupon);
@@ -38,6 +37,7 @@ export function CartSidebar() {
       setCouponInput('');
     }
   }, [appliedCoupon]);
+
   useEffect(() => {
     if (isCartOpen) {
       document.body.style.overflow = 'hidden';
@@ -49,25 +49,29 @@ export function CartSidebar() {
     };
   }, [isCartOpen]);
 
-  const subtotal = useMemo(() => {
-    return cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  const toCents = (price: number) => Math.round(price * 100);
+
+  const subtotalCents = useMemo(() => {
+    return cart.reduce((acc, item) => {
+      return acc + toCents(item.price) * item.quantity;
+    }, 0);
   }, [cart]);
 
-  const discount = useMemo(() => {
-    if (appliedCoupon === 'PRIMEIRA10') return subtotal * 0.1;
-    if (appliedCoupon === 'KIT15') return subtotal * 0.15;
+  const discountCents = useMemo(() => {
+    if (appliedCoupon === 'PRIMEIRA10') return Math.round(subtotalCents * 0.1);
+    if (appliedCoupon === 'KIT15') return Math.round(subtotalCents * 0.15);
     return 0;
-  }, [subtotal, appliedCoupon]);
+  }, [subtotalCents, appliedCoupon]);
 
-  const shipping = 0;
-  const total = subtotal - discount + shipping;
-  const installmentValue = total / 6;
+  const shippingCents = 0;
+  const totalCents = subtotalCents - discountCents + shippingCents;
+  const installmentValueCents = Math.round(totalCents / 6);
 
-  const formatMoney = (value: number) =>
+  const formatMoneyFromCents = (valueInCents: number) =>
     new Intl.NumberFormat('pt-BR', {
       style: 'currency',
       currency: 'BRL',
-    }).format(value);
+    }).format(valueInCents / 100);
 
   const handleApplyCoupon = () => {
     applyCoupon(couponInput);
@@ -75,7 +79,7 @@ export function CartSidebar() {
 
   return (
     <div
-      className={`fixed inset-0 z-[60] flex justify-end transition-all duration-300 ${
+      className={`fixed inset-0 z-60 flex justify-end transition-all duration-300 ${
         isCartOpen ? 'pointer-events-auto' : 'pointer-events-none delay-300'
       }`}
     >
@@ -145,7 +149,7 @@ export function CartSidebar() {
                           </span>
 
                           <button
-                            onClick={() => addToCart(item)}
+                            onClick={() => addToCart(item, { silent: true })}
                             disabled={isMaxStock}
                             className={`p-1 transition-colors cursor-pointer ${
                               isMaxStock
@@ -160,7 +164,9 @@ export function CartSidebar() {
                     </div>
                     <div className="flex items-center justify-between mt-2">
                       <span className="font-mono text-sm font-medium">
-                        {formatMoney(item.price * item.quantity)}
+                        {formatMoneyFromCents(
+                          toCents(item.price) * item.quantity,
+                        )}
                       </span>
                       <button
                         onClick={() => removeFromCart(item.id)}
@@ -210,7 +216,9 @@ export function CartSidebar() {
             <div className="space-y-2 pt-2 text-sm">
               <div className="flex justify-between text-gray-600">
                 <span>Subtotal ({cartCount} itens)</span>
-                <span className="font-mono">{formatMoney(subtotal)}</span>
+                <span className="font-mono">
+                  {formatMoneyFromCents(subtotalCents)}
+                </span>
               </div>
 
               <div className="flex justify-between text-emerald-600">
@@ -224,7 +232,9 @@ export function CartSidebar() {
               {appliedCoupon && (
                 <div className="flex justify-between text-emerald-600">
                   <span>Desconto ({appliedCoupon})</span>
-                  <span className="font-mono">- {formatMoney(discount)}</span>
+                  <span className="font-mono">
+                    - {formatMoneyFromCents(discountCents)}
+                  </span>
                 </div>
               )}
 
@@ -232,10 +242,11 @@ export function CartSidebar() {
                 <span className="font-bold text-gray-900 uppercase">Total</span>
                 <div className="text-right">
                   <div className="text-2xl font-bold font-mono text-emerald-600 leading-none">
-                    {formatMoney(total)}
+                    {formatMoneyFromCents(totalCents)}
                   </div>
                   <div className="text-[10px] text-gray-500 font-medium mt-1">
-                    ou em até 6x de {formatMoney(installmentValue)} sem juros
+                    ou em até 6x de{' '}
+                    {formatMoneyFromCents(installmentValueCents)} sem juros
                   </div>
                 </div>
               </div>

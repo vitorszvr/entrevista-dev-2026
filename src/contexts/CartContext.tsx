@@ -8,7 +8,7 @@ import {
   ReactNode,
   useRef,
 } from 'react';
-import { Product, CartItem } from '@/types';
+import { Product, CartItem, isValidCartItem } from '@/types';
 
 interface CartContextType {
   cart: CartItem[];
@@ -40,9 +40,23 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+
     const savedCart = localStorage.getItem('deploy-cart');
     if (savedCart) {
-      setCart(JSON.parse(savedCart));
+      try {
+        const parsed = JSON.parse(savedCart);
+        if (Array.isArray(parsed) && parsed.every(isValidCartItem)) {
+          setCart(parsed);
+        } else {
+          console.warn('Carrinho inválido resetado.');
+          localStorage.removeItem('deploy-cart');
+          setCart([]);
+        }
+      } catch (error) {
+        console.error('Erro ao ler carrinho:', error);
+        localStorage.removeItem('deploy-cart');
+      }
     }
   }, []);
 
