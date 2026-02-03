@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import {
   X,
   Trash2,
@@ -23,19 +23,28 @@ export function CartSidebar() {
     isCartOpen,
     closeCart,
     cartCount,
+    appliedCoupon,
+    applyCoupon,
+    removeCoupon,
   } = useCart();
 
   const [couponInput, setCouponInput] = useState('');
-  const [appliedCoupon, setAppliedCoupon] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (appliedCoupon) {
+      setCouponInput(appliedCoupon);
+    } else {
+      setCouponInput('');
+    }
+  }, [appliedCoupon]);
 
   const subtotal = useMemo(() => {
     return cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
   }, [cart]);
 
   const discount = useMemo(() => {
-    if (appliedCoupon === 'PRIMEIRA10') {
-      return subtotal * 0.1;
-    }
+    if (appliedCoupon === 'PRIMEIRA10') return subtotal * 0.1;
+    if (appliedCoupon === 'KIT15') return subtotal * 0.15;
     return 0;
   }, [subtotal, appliedCoupon]);
 
@@ -50,16 +59,7 @@ export function CartSidebar() {
     }).format(value);
 
   const handleApplyCoupon = () => {
-    if (couponInput.toUpperCase() === 'PRIMEIRA10') {
-      setAppliedCoupon('PRIMEIRA10');
-      setCouponInput('');
-    } else {
-      alert('Cupom inválido! Tente: PRIMEIRA10');
-    }
-  };
-
-  const handleRemoveCoupon = () => {
-    setAppliedCoupon(null);
+    applyCoupon(couponInput);
   };
 
   return (
@@ -144,7 +144,6 @@ export function CartSidebar() {
                                 ? 'opacity-30 cursor-not-allowed'
                                 : 'hover:bg-gray-200'
                             }`}
-                            title={isMaxStock ? 'Estoque máximo atingido' : ''}
                           >
                             <Plus className="w-3 h-3 text-gray-600" />
                           </button>
@@ -158,7 +157,6 @@ export function CartSidebar() {
                       <button
                         onClick={() => removeFromCart(item.id)}
                         className="text-gray-400 hover:text-red-500 transition-colors cursor-pointer"
-                        title="Remover item"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -186,7 +184,7 @@ export function CartSidebar() {
               </div>
               {appliedCoupon ? (
                 <button
-                  onClick={handleRemoveCoupon}
+                  onClick={removeCoupon}
                   className="px-4 py-2 bg-gray-200 text-gray-600 text-xs font-bold uppercase tracking-wider rounded-sm hover:bg-gray-300 transition-colors"
                 >
                   Remover
@@ -215,9 +213,10 @@ export function CartSidebar() {
                 <span className="font-mono font-medium">Grátis</span>
               </div>
 
+              {/* MUDANÇA AQUI: Removi animate-pulse, bg-emerald-50, px e rounded */}
               {appliedCoupon && (
-                <div className="flex justify-between text-emerald-600 animate-pulse">
-                  <span>Desconto (PRIMEIRA10)</span>
+                <div className="flex justify-between text-emerald-600">
+                  <span>Desconto ({appliedCoupon})</span>
                   <span className="font-mono">- {formatMoney(discount)}</span>
                 </div>
               )}

@@ -7,10 +7,7 @@ export function AddToCartButton({ product }: { product: Product }) {
   const { addToCart, openCart } = useCart();
 
   const handleAddToCart = () => {
-    // Adiciona silenciosamente (sem Toast)
     addToCart(product, { silent: true });
-
-    // Abre o carrinho (Sidebar) imediatamente
     openCart();
   };
 

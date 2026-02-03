@@ -55,8 +55,8 @@ export function Header() {
           className="relative flex items-center gap-2 hover:opacity-70 transition-opacity p-2 -mr-2 cursor-pointer"
           aria-label="Abrir carrinho"
         >
-          <span className="text-xs font-mono font-medium hidden sm:block">
-            CARRINHO [{cartCount}]
+          <span className="text-xs font-mono font-medium hidden sm:block text-black">
+            CARRINHO [<span className="text-emerald-600">{cartCount}</span>]
           </span>
 
           <div className="relative">

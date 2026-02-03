@@ -59,7 +59,7 @@ export function ProductCard({ product }: ProductCardProps) {
               onClick={handleAddToCart}
               className="cursor-pointer text-[10px] font-mono font-bold bg-stone-200/50 hover:bg-[#f3350c] hover:text-white px-3 py-1 transition-colors uppercase tracking-wider z-30 relative shrink-0"
             >
-              [ + ADD ]
+              [ ADD ] +
             </button>
           </div>
         </div>

@@ -2,6 +2,7 @@ import { ProductCard } from '@/components/ProductCard';
 import { Product } from '@/types';
 import { SearchBar } from '@/components/SearchBar';
 import productsData from '@/data/products.json';
+import { HeroSection } from '@/components/HeroSection'; // Importar o novo componente
 
 export default async function Home(props: {
   searchParams?: Promise<{ q?: string }>;
@@ -22,31 +23,8 @@ export default async function Home(props: {
 
   return (
     <div className="min-h-screen bg-stone-50">
-      <section className="pt-10 pb-12 md:pb-16 border-gray-200">
-        <div className="flex flex-col">
-          <h1 className="font-mono font-bold text-sm text-emerald-600 mb-3 flex items-center gap-2">
-            <span>~/loja $</span>
-          </h1>
-
-          <div className="flex items-center gap-3 mb-6">
-            <span className="text-3xl md:text-4xl font-light text-gray-400">
-              cd
-            </span>
-
-            <div className="flex items-center">
-              <h2 className="text-4xl md:text-6xl font-medium tracking-tighter text-black">
-                ESSENCIAIS
-              </h2>
-              <span className="animate-terminal-blink bg-emerald-600 w-[4px] h-8 md:h-16 block ml-2 md:ml-4 "></span>
-            </div>
-          </div>
-
-          <p className="text-gray-500 text-sm md:text-base leading-relaxed text-justify">
-            Curadoria de itens essenciais para o seu setup: do hardware de alta
-            performance à caneca do café sagrado.
-          </p>
-        </div>
-      </section>
+      {/* Componente Hero isolado (Client Component) */}
+      <HeroSection />
 
       <SearchBar className="mb-8 w-full" />
 
