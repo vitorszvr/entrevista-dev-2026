@@ -54,7 +54,6 @@ export function Chatbot() {
     };
 
     handleResize();
-
     window.addEventListener('resize', handleResize);
 
     return () => {
@@ -326,6 +325,7 @@ export function Chatbot() {
           border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)] 
           transition-all duration-200 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 active:translate-y-0 active:shadow-none
           rounded-none 
+          mb-[env(safe-area-inset-bottom)] 
           ${isCartOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}
           ${
             isOpen
@@ -338,14 +338,17 @@ export function Chatbot() {
       </button>
 
       <div
-        className={`fixed bottom-24 left-4 right-4 md:left-auto md:right-6 md:w-[380px] max-w-[500px]
+        className={`fixed 
+        bottom-[calc(6rem+env(safe-area-inset-bottom))] left-4 right-4 
+        md:bottom-24 md:left-auto md:right-6 md:w-[380px] 
+        w-[calc(100vw-32px)] md:max-w-[500px]
         bg-stone-50 border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] 
         rounded-none overflow-hidden z-[60] transition-all duration-300 origin-bottom-right flex flex-col
         ${isOpen ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-90 translate-y-10 pointer-events-none'}
         `}
-        style={{ height: 'min(600px, 75vh)' }}
+        style={{ height: 'min(600px, 75dvh)' }}
       >
-        <div className="bg-black p-4 flex items-center justify-between border-b-2 border-black">
+        <div className="bg-black p-4 flex items-center justify-between border-b-2 border-black shrink-0">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-emerald-600 flex items-center justify-center rounded-none border border-emerald-400">
               <Bot className="w-5 h-5 text-white" />
@@ -462,7 +465,7 @@ export function Chatbot() {
           <div ref={messagesEndRef} />
         </div>
 
-        <div className="p-3 bg-white border-t-2 border-black">
+        <div className="p-3 bg-white border-t-2 border-black shrink-0">
           <div className="relative flex items-center gap-2">
             <span className="text-emerald-600 font-bold font-mono text-lg">
               {'>'}
@@ -474,7 +477,7 @@ export function Chatbot() {
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={handleKeyPress}
               placeholder="Digite comando..."
-              className="flex-1 bg-transparent border-none outline-none text-sm py-2 text-black font-mono placeholder:text-gray-400 uppercase"
+              className="flex-1 bg-transparent border-none outline-none text-base md:text-sm py-2 text-black font-mono placeholder:text-gray-400 uppercase"
             />
             <button
               onClick={() => handleSend()}
