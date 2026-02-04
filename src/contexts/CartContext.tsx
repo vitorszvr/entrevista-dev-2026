@@ -26,6 +26,8 @@ interface CartContextType {
   appliedCoupon: string | null;
   applyCoupon: (code: string) => boolean;
   removeCoupon: () => void;
+  showLocalImages: boolean;
+  toggleLocalImages: () => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -35,6 +37,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [toastType, setToastType] = useState<'success' | 'error'>('success');
+
+  const [showLocalImages, setShowLocalImages] = useState(false);
 
   const [appliedCoupon, setAppliedCoupon] = useState<string | null>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -80,6 +84,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const hideToast = () => {
     setToastMessage(null);
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
+  };
+
+  const toggleLocalImages = () => {
+    setShowLocalImages((prev) => !prev);
+    showToast(
+      !showLocalImages
+        ? 'Modo: Imagens Locais (public/)'
+        : 'Modo: Imagens Originais',
+      'success',
+    );
   };
 
   const applyCoupon = (code: string) => {
@@ -159,6 +173,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
         appliedCoupon,
         applyCoupon,
         removeCoupon,
+        showLocalImages,
+        toggleLocalImages,
       }}
     >
       {children}

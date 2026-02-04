@@ -12,7 +12,7 @@ import {
   ArrowRight,
 } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
-import Image from 'next/image';
+import { ProductImage } from './ProductImage';
 
 export function CartSidebar() {
   const {
@@ -136,9 +136,8 @@ export function CartSidebar() {
               return (
                 <div key={item.id} className="flex gap-4 group">
                   <div className="relative w-20 h-20 bg-stone-50 border border-gray-200 shrink-0">
-                    <Image
-                      src={item.image}
-                      alt={item.name}
+                    <ProductImage
+                      product={item}
                       fill
                       className="object-contain p-2"
                     />

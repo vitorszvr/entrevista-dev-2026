@@ -1,9 +1,9 @@
-import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import products from '@/data/products.json';
 import { Metadata } from 'next';
 import { AddToCartButton } from '@/components/AddToCartButton';
+import { ProductImage } from '@/components/ProductImage';
 
 export async function generateMetadata(props: {
   params: Promise<{ id: string }>;
@@ -61,9 +61,8 @@ export default async function ProductPage(props: {
       <section className="border-t border-b border-gray-200 grid grid-cols-1 lg:grid-cols-2 bg-stone-50">
         <div className="relative aspect-square lg:aspect-auto lg:h-[600px] border-b lg:border-b-0 lg:border-r border-gray-200 p-8 md:p-12 flex items-center justify-center bg-gray-50/30">
           <div className="relative w-full h-full max-w-md max-h-md">
-            <Image
-              src={product.image}
-              alt={product.name}
+            <ProductImage
+              product={product}
               fill
               className="object-contain transition-transform duration-700 hover:scale-105"
               priority

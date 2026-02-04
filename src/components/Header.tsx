@@ -3,13 +3,13 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { ShoppingBag } from 'lucide-react';
+import { ShoppingBag, Image as ImageIcon } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { SearchBar } from './SearchBar';
 import { Suspense } from 'react';
 
 export function Header() {
-  const { cartCount, openCart } = useCart();
+  const { cartCount, openCart, toggleLocalImages, showLocalImages } = useCart();
   const pathname = usePathname();
 
   const showSearch = pathname !== '/';
@@ -51,25 +51,45 @@ export function Header() {
           </div>
         )}
 
-        <button
-          onClick={openCart}
-          className="relative flex items-center gap-2 hover:opacity-70 transition-opacity p-2 -mr-2 cursor-pointer"
-          aria-label="Abrir carrinho"
-        >
-          <span className="text-xs font-mono font-medium hidden sm:block text-black">
-            CARRINHO [<span className="text-emerald-600">{cartCount}</span>]
-          </span>
+        <div className="flex items-center gap-4">
+          <button
+            onClick={toggleLocalImages}
+            className={`
+              flex items-center gap-2 px-2 py-1.5 border rounded-sm transition-all text-[10px] font-mono font-bold uppercase tracking-wider
+              ${
+                showLocalImages
+                  ? 'bg-emerald-50 border-emerald-200 text-emerald-700'
+                  : 'bg-stone-100 border-gray-200 text-gray-500 hover:bg-stone-200'
+              }
+            `}
+            title="Alternar: Imagens do JSON vs Imagens Locais (public/ID.png)"
+          >
+            <ImageIcon className="w-4 h-4" />
+            <span className="hidden sm:inline">
+              {showLocalImages ? 'IMG: LOCAL' : 'IMG: REMOTE'}
+            </span>
+          </button>
 
-          <div className="relative">
-            <ShoppingBag className="w-6 h-6 text-black" strokeWidth={1.5} />
+          <button
+            onClick={openCart}
+            className="relative flex items-center gap-2 hover:opacity-70 transition-opacity p-2 -mr-2 cursor-pointer"
+            aria-label="Abrir carrinho"
+          >
+            <span className="text-xs font-mono font-medium hidden sm:block text-black">
+              CARRINHO [<span className="text-emerald-600">{cartCount}</span>]
+            </span>
 
-            {cartCount > 0 && (
-              <span className="absolute -top-1 -right-1 bg-emerald-600 text-white text-[9px] font-bold font-mono w-4 h-4 flex items-center justify-center rounded-full sm:hidden">
-                {cartCount}
-              </span>
-            )}
-          </div>
-        </button>
+            <div className="relative">
+              <ShoppingBag className="w-6 h-6 text-black" strokeWidth={1.5} />
+
+              {cartCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-emerald-600 text-white text-[9px] font-bold font-mono w-4 h-4 flex items-center justify-center rounded-full sm:hidden">
+                  {cartCount}
+                </span>
+              )}
+            </div>
+          </button>
+        </div>
       </div>
 
       {showSearch && (

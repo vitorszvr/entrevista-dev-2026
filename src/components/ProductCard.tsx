@@ -1,9 +1,9 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
 import { Product } from '@/types';
 import { useCart } from '@/contexts/CartContext';
+import { ProductImage } from './ProductImage'; // Importe o componente
 
 interface ProductCardProps {
   product: Product;
@@ -33,9 +33,9 @@ export function ProductCard({ product }: ProductCardProps) {
 
       <div className="relative p-4 flex flex-col h-full">
         <div className="relative aspect-square w-full mb-4 overflow-hidden">
-          <Image
-            src={product.image}
-            alt={product.name}
+          {/* USANDO O NOVO COMPONENTE */}
+          <ProductImage
+            product={product}
             fill
             className="object-contain p-2 transition-transform duration-500 ease-out group-hover:scale-105"
           />

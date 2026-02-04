@@ -11,9 +11,9 @@ import {
 } from 'lucide-react';
 import productsData from '@/data/products.json';
 import Link from 'next/link';
-import Image from 'next/image';
 import { Product } from '@/types';
 import { useCart } from '@/contexts/CartContext';
+import { ProductImage } from './ProductImage';
 
 interface Message {
   id: string;
@@ -340,8 +340,8 @@ export function Chatbot() {
       <div
         className={`fixed 
         bottom-[calc(6rem+env(safe-area-inset-bottom))] left-4 right-4 
-        md:bottom-24 md:left-auto md:right-6 md:w-[380px] 
-        w-[calc(100vw-32px)] md:max-w-[500px]
+        md:bottom-24 md:left-auto md:right-6 md:w-95
+        w-[calc(100vw-32px)] md:max-w-125
         bg-stone-50 border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] 
         rounded-none overflow-hidden z-60 transition-all duration-300 origin-bottom-right flex flex-col
         ${isOpen ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-90 translate-y-10 pointer-events-none'}
@@ -424,9 +424,8 @@ export function Chatbot() {
                       className="flex gap-3 p-2 bg-white border border-gray-300 hover:border-emerald-600 transition-all rounded-none group cursor-pointer shadow-sm hover:shadow-md"
                     >
                       <div className="w-12 h-12 bg-gray-100 shrink-0 relative border border-gray-100">
-                        <Image
-                          src={product.image}
-                          alt={product.name}
+                        <ProductImage
+                          product={product}
                           fill
                           className="object-contain p-1"
                           sizes="48px"
