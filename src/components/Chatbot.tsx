@@ -321,6 +321,7 @@ export function Chatbot() {
 
       <button
         onClick={() => setIsOpen(!isOpen)}
+        aria-label={isOpen ? 'Fechar chat' : 'Abrir chat'}
         className={`fixed bottom-6 right-6 z-60 w-14 h-14 flex items-center justify-center 
           border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)] 
           transition-all duration-200 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 active:translate-y-0 active:shadow-none
@@ -481,6 +482,7 @@ export function Chatbot() {
             <button
               onClick={() => handleSend()}
               disabled={!inputValue.trim()}
+              aria-label="Enviar comando"
               className="p-2 bg-black text-white hover:bg-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors rounded-none"
             >
               {inputValue.trim() ? (
