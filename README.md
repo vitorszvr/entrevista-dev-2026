@@ -329,7 +329,18 @@ npx playwright test
 - Vitest + Testing Library (testes unitários)
 - Playwright (testes E2E)
 - ESLint + Prettier (qualidade de código)
+---
 
+## 🤖 Uso de IA no Desenvolvimento
+
+Em conformidade com a transparência valorizada neste desafio, declaro que utilizei ferramentas de Inteligência Artificial (como o **Google Gemini**) para auxiliar na produtividade do desenvolvimento.
+
+**Principais usos:**
+* **Auxílio na Codificação:** Apoio na escrita de funções, lógica de componentes e sugestões de sintaxe (atuando como um *pair programmer*).
+* **Configuração de Testes:** Auxílio no boilerplate inicial para configuração do Vitest e Playwright.
+* **Documentação:** Apoio na estruturação e revisão textual deste README e do DECISIONS.md.
+
+> **Nota:** Todo o código sugerido pela IA foi revisado, testado e validado por mim.
 ---
 
 ## 🔄 Melhorias Futuras
