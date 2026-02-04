@@ -314,7 +314,7 @@ export function Chatbot() {
   return (
     <>
       <div
-        className={`fixed inset-0 bg-black/60 z-[59] md:hidden transition-opacity duration-300 backdrop-blur-sm
+        className={`fixed inset-0 bg-black/60 z-59 md:hidden transition-opacity duration-300 backdrop-blur-sm
           ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}
         `}
         onClick={() => setIsOpen(false)}
@@ -322,7 +322,7 @@ export function Chatbot() {
 
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`fixed bottom-6 right-6 z-[60] w-14 h-14 flex items-center justify-center 
+        className={`fixed bottom-6 right-6 z-60 w-14 h-14 flex items-center justify-center 
           border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)] 
           transition-all duration-200 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 active:translate-y-0 active:shadow-none
           rounded-none 
@@ -338,9 +338,9 @@ export function Chatbot() {
       </button>
 
       <div
-        className={`fixed bottom-24 left-4 right-4 md:left-auto md:right-6 md:w-[380px] max-w-[500px]
+        className={`fixed bottom-24 left-4 right-4 md:left-auto md:right-6 md:w-95 max-w-125
         bg-stone-50 border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] 
-        rounded-none overflow-hidden z-[60] transition-all duration-300 origin-bottom-right flex flex-col
+        rounded-none overflow-hidden z-60 transition-all duration-300 origin-bottom-right flex flex-col
         ${isOpen ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-90 translate-y-10 pointer-events-none'}
         `}
         style={{ height: 'min(600px, 75vh)' }}
@@ -378,7 +378,7 @@ export function Chatbot() {
               className={`flex flex-col gap-1 max-w-[90%] ${msg.role === 'user' ? 'self-end items-end' : 'self-start items-start'}`}
             >
               <span className="text-[10px] font-mono font-bold text-gray-400 uppercase tracking-wider mb-1">
-                {msg.role === 'user' ? 'USER' : 'SYSTEM'} //{' '}
+                {msg.role === 'user' ? 'USER' : 'SYSTEM'}
                 {msg.timestamp.toLocaleTimeString([], {
                   hour: '2-digit',
                   minute: '2-digit',

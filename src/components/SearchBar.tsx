@@ -19,7 +19,7 @@ const CATEGORIES = [
 
 interface SearchBarProps {
   className?: string;
-  showFilter?: boolean; // Nova propriedade
+  showFilter?: boolean;
 }
 
 function SearchBarContent({
@@ -30,10 +30,21 @@ function SearchBarContent({
   const { replace } = useRouter();
   const pathname = usePathname();
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // 1. Estado para controlar o texto do input
+  const [inputValue, setInputValue] = useState(searchParams.get('q') || '');
+
   const [results, setResults] = useState<Product[]>([]);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const currentCategory = searchParams.get('category') || 'Todos';
+
+  // 2. Sincroniza o input com a URL.
+  // Se você clicar em "Limpar Tudo", a URL muda, e isso limpa o input.
+  useEffect(() => {
+    setInputValue(searchParams.get('q') || '');
+  }, [searchParams]);
+
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -46,7 +57,11 @@ function SearchBarContent({
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
   const handleSearch = async (term: string) => {
+    // Atualiza o visual imediatamente
+    setInputValue(term);
+
     if (pathname === '/') {
       const params = new URLSearchParams(searchParams);
       if (term) {
@@ -54,15 +69,16 @@ function SearchBarContent({
       } else {
         params.delete('q');
       }
-      // scroll: false mantém a posição da tela
       replace(`/?${params.toString()}`, { scroll: false });
       return;
     }
+
     if (term.length === 0) {
       setResults([]);
       setIsSearchOpen(false);
       return;
     }
+
     try {
       const res = await fetch('/api/products');
       const products: Product[] = await res.json();
@@ -101,8 +117,9 @@ function SearchBarContent({
               ? `Buscar em ${currentCategory}`
               : 'Buscar'
           }
+          // 3. Input agora é controlado pelo state
+          value={inputValue}
           onChange={(e) => handleSearch(e.target.value)}
-          defaultValue={searchParams.get('q')?.toString()}
           className="flex-1 bg-transparent border-none outline-none font-mono text-xs md:text-sm text-emerald-700 px-3 h-full placeholder:text-gray-400 w-full min-w-0"
           autoComplete="off"
           spellCheck={false}
@@ -113,7 +130,7 @@ function SearchBarContent({
             onClick={() => setIsFilterOpen(!isFilterOpen)}
             className={`
               h-full px-3 md:px-5 border-l border-gray-200 flex items-center justify-center gap-2 cursor-pointer transition-colors
-              ${isFilterOpen || currentCategory !== 'Todos' ? 'bg-stone-200 text-emerald-700' : 'hover:bg-gray-200 text-gray-500'}
+              ${isFilterOpen || currentCategory !== 'Todos' ? 'bg-stone-200/50 text-emerald-700' : 'hover:bg-stone-200/40 text-gray-500'}
             `}
             title="Filtrar"
           >
@@ -140,7 +157,7 @@ function SearchBarContent({
                   onClick={() => handleCategorySelect(cat)}
                   className={`
                     w-full text-left px-4 py-2 text-xs font-mono font-medium hover:bg-stone-50 transition-colors flex items-center justify-between
-                    ${isActive ? 'text-emerald-700 bg-emerald-50/50' : 'text-gray-700'}
+                    ${isActive ? 'text-emerald-700 bg-emerald-50/40' : 'text-gray-700'}
                   `}
                 >
                   {cat}

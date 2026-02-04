@@ -1,3 +1,4 @@
+import Link from 'next/link'; // Importação necessária para o comportamento do scroll
 import { ProductCard } from '@/components/ProductCard';
 import { Product } from '@/types';
 import { SearchBar } from '@/components/SearchBar';
@@ -10,7 +11,10 @@ export default async function Home(props: {
   const searchParams = await props.searchParams;
   const query = searchParams?.q || '';
   const category = searchParams?.category || '';
-  const allProducts: Product[] = productsData;
+
+  // Mantendo a sua tipagem
+  const allProducts: Product[] = productsData as unknown as Product[];
+
   const products = allProducts.filter((product) => {
     const term = query.toLowerCase();
     const matchesSearch =
@@ -21,6 +25,7 @@ export default async function Home(props: {
 
     return matchesSearch && matchesCategory;
   });
+
   const displayTitle = category && category !== 'Todos' ? category : 'CATÁLOGO';
 
   return (
@@ -51,12 +56,14 @@ export default async function Home(props: {
               <p className="font-mono text-gray-400 mb-4">
                 Nenhum item encontrado.
               </p>
-              <a
+              {/* AQUI: Mudamos de <a> para <Link> com scroll={false} */}
+              <Link
                 href="/"
+                scroll={false}
                 className="inline-block px-4 py-2 bg-black text-white text-xs font-mono hover:bg-emerald-600 transition-colors"
               >
                 [ LIMPAR TUDO ]
-              </a>
+              </Link>
             </div>
           )}
         </div>

@@ -26,6 +26,7 @@ export function CartSidebar() {
     appliedCoupon,
     applyCoupon,
     removeCoupon,
+    hideToast,
   } = useCart();
 
   const [couponInput, setCouponInput] = useState('');
@@ -41,13 +42,14 @@ export function CartSidebar() {
   useEffect(() => {
     if (isCartOpen) {
       document.body.style.overflow = 'hidden';
+      hideToast();
     } else {
       document.body.style.overflow = '';
     }
     return () => {
       document.body.style.overflow = '';
     };
-  }, [isCartOpen]);
+  }, [isCartOpen, hideToast]);
 
   const toCents = (price: number) => Math.round(price * 100);
 
@@ -79,24 +81,32 @@ export function CartSidebar() {
 
   return (
     <div
-      className={`fixed inset-0 z-60 flex justify-end transition-all duration-300 ${
+      className={`fixed inset-0 z-[60] flex justify-end transition-all duration-300 ${
         isCartOpen ? 'pointer-events-auto' : 'pointer-events-none delay-300'
       }`}
+      aria-hidden={!isCartOpen}
     >
       <div
         className={`absolute inset-0 bg-black/50 transition-opacity duration-300 ${
           isCartOpen ? 'opacity-100' : 'opacity-0'
         }`}
         onClick={closeCart}
+        aria-hidden="true"
       />
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Carrinho de compras"
         className={`relative w-full max-w-md bg-stone-50 h-full shadow-2xl flex flex-col transition-transform duration-300 ease-out ${
           isCartOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
         <div className="p-6 border-b border-gray-200 flex items-center justify-between bg-stone-50">
           <div className="flex items-center gap-3">
-            <ShoppingBag className="w-5 h-5 text-emerald-600" />
+            <ShoppingBag
+              className="w-5 h-5 text-emerald-600"
+              aria-hidden="true"
+            />
             <h2 className="font-mono font-bold text-lg tracking-tight">
               SEU SETUP <span className="text-gray-400">({cartCount})</span>
             </h2>
@@ -104,15 +114,19 @@ export function CartSidebar() {
           <button
             onClick={closeCart}
             className="p-2 hover:bg-gray-200 rounded-full transition-colors cursor-pointer"
+            aria-label="Fechar carrinho"
           >
-            <X className="w-5 h-5 text-gray-500" />
+            <X className="w-5 h-5 text-gray-500" aria-hidden="true" />
           </button>
         </div>
 
         <div className="flex-1 overflow-y-auto p-6 space-y-6">
           {cart.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-center opacity-50">
-              <ShoppingBag className="w-12 h-12 mb-4 text-gray-300" />
+              <ShoppingBag
+                className="w-12 h-12 mb-4 text-gray-300"
+                aria-hidden="true"
+              />
               <p className="font-mono text-sm text-gray-400">Carrinho vazio</p>
             </div>
           ) : (
@@ -140,11 +154,18 @@ export function CartSidebar() {
                           <button
                             onClick={() => decreaseQuantity(item.id)}
                             className="p-1 hover:bg-gray-200 transition-colors cursor-pointer"
+                            aria-label={`Diminuir quantidade de ${item.name}`}
                           >
-                            <Minus className="w-3 h-3 text-gray-600" />
+                            <Minus
+                              className="w-3 h-3 text-gray-600"
+                              aria-hidden="true"
+                            />
                           </button>
 
-                          <span className="font-mono text-xs w-8 text-center text-gray-900">
+                          <span
+                            className="font-mono text-xs w-8 text-center text-gray-900"
+                            aria-label={`Quantidade atual: ${item.quantity}`}
+                          >
                             {item.quantity}
                           </span>
 
@@ -156,8 +177,12 @@ export function CartSidebar() {
                                 ? 'opacity-30 cursor-not-allowed'
                                 : 'hover:bg-gray-200'
                             }`}
+                            aria-label={`Aumentar quantidade de ${item.name}`}
                           >
-                            <Plus className="w-3 h-3 text-gray-600" />
+                            <Plus
+                              className="w-3 h-3 text-gray-600"
+                              aria-hidden="true"
+                            />
                           </button>
                         </div>
                       </div>
@@ -171,8 +196,9 @@ export function CartSidebar() {
                       <button
                         onClick={() => removeFromCart(item.id)}
                         className="text-gray-400 hover:text-red-500 transition-colors cursor-pointer"
+                        aria-label={`Remover ${item.name} do carrinho`}
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 className="w-4 h-4" aria-hidden="true" />
                       </button>
                     </div>
                   </div>
@@ -186,7 +212,10 @@ export function CartSidebar() {
           <div className="border-t border-gray-200 bg-gray-50/50 p-6 space-y-4">
             <div className="flex gap-2">
               <div className="relative flex-1">
-                <Tag className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Tag
+                  className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
+                  aria-hidden="true"
+                />
                 <input
                   type="text"
                   placeholder="Cupom de desconto"
@@ -194,6 +223,7 @@ export function CartSidebar() {
                   onChange={(e) => setCouponInput(e.target.value)}
                   className="w-full pl-9 pr-3 py-2 text-sm border border-gray-300 rounded-sm focus:outline-none focus:border-emerald-600 font-mono uppercase"
                   disabled={!!appliedCoupon}
+                  aria-label="Código do cupom de desconto"
                 />
               </div>
               {appliedCoupon ? (
@@ -223,7 +253,7 @@ export function CartSidebar() {
 
               <div className="flex justify-between text-emerald-600">
                 <span className="flex items-center gap-1.5">
-                  <Truck className="w-3 h-3" />
+                  <Truck className="w-3 h-3" aria-hidden="true" />
                   Frete
                 </span>
                 <span className="font-mono font-medium">Grátis</span>
@@ -254,7 +284,10 @@ export function CartSidebar() {
 
             <button className="w-full bg-black text-white font-mono font-bold py-4 hover:bg-[#f3350c] transition-colors uppercase tracking-widest text-sm cursor-pointer flex items-center justify-center gap-2 group mt-2">
               <span>[ Finalizar Compra ]</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight
+                className="w-4 h-4 group-hover:translate-x-1 transition-transform"
+                aria-hidden="true"
+              />
             </button>
           </div>
         )}
