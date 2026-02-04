@@ -8,6 +8,7 @@ import {
   Terminal,
   ArrowRight,
   CornerDownLeft,
+  Dices,
 } from 'lucide-react';
 import productsData from '@/data/products.json';
 import Link from 'next/link';
@@ -105,8 +106,32 @@ export function Chatbot() {
   }, [messages, isTyping, isOpen]);
 
   const analyzeIntent = (text: string) => {
-    const lowerText = text.toLowerCase();
+    const lowerText = text.toLowerCase().trim();
 
+    // Prioridade 1: Comandos de Terminal (Easter Eggs)
+    const terminalCommands = [
+      'sudo',
+      'ls',
+      'whoami',
+      'pwd',
+      'neofetch',
+      'uname',
+      'top',
+      'git',
+      'clear',
+      'help',
+      'cat',
+      'ping',
+      'date',
+      'echo',
+      'vim',
+      'exit',
+    ];
+    if (terminalCommands.some((cmd) => lowerText.startsWith(cmd))) {
+      return { type: 'terminal_cmd', command: lowerText.split(' ')[0] };
+    }
+
+    // Prioridade 2: Ver tudo
     if (
       ['todos', 'tudo', 'lista', 'catalogo', 'populares', 'ver todos'].some(
         (t) => lowerText.includes(t),
@@ -115,6 +140,7 @@ export function Chatbot() {
       return { type: 'show_all' };
     }
 
+    // Prioridade 3: Filtro de Preço
     const priceMatch = lowerText.match(
       /(?:entre|de|faixa de)?\s*(\d+)\s*(?:a|e|até|-)?\s*(\d+)?/,
     );
@@ -128,6 +154,8 @@ export function Chatbot() {
       'caro',
       'até',
       'menos',
+      'abaixo',
+      'acima',
     ].some((t) => lowerText.includes(t));
 
     if (priceMatch && hasCurrencyTerms) {
@@ -146,6 +174,7 @@ export function Chatbot() {
       }
     }
 
+    // Prioridade 4: Recomendações
     if (
       ['recomend', 'sugest', 'melhor', 'indica'].some((t) =>
         lowerText.includes(t),
@@ -154,6 +183,7 @@ export function Chatbot() {
       return { type: 'recommendation' };
     }
 
+    // Prioridade 5: Categorias exatas
     const foundCategory = availableCategories.find((cat) =>
       lowerText.includes(cat),
     );
@@ -168,8 +198,91 @@ export function Chatbot() {
     text: string,
     currentContext: ConversationContext,
   ) => {
-    const lowerText = text.toLowerCase();
+    const lowerText = text.toLowerCase().trim();
     const intent = analyzeIntent(text);
+
+    // Respostas de Easter Eggs de Terminal
+    if (intent.type === 'terminal_cmd') {
+      const cmd = (intent as any).command;
+      const args = lowerText.split(' ').slice(1).join(' ');
+
+      switch (cmd) {
+        case 'sudo':
+          return {
+            text: 'SYSTEM_ERROR: User is not in the sudoers file. This incident will be reported.',
+            products: [],
+          };
+        case 'whoami':
+          return { text: 'root@deploy-os', products: [] };
+        case 'ls':
+          return {
+            text: 'README.md  package.json  src/  public/  node_modules/  products.json',
+            products: [],
+          };
+        case 'pwd':
+          return { text: '/home/vitorszvr/deploy-store', products: [] };
+        case 'neofetch':
+          return {
+            text: `   .---.      OS: DeployOS 2026\n  /     \\     Kernel: Next.js 16.1.6\n  | (O) |     Uptime: 100% stable\n  \\  ^  /     Shell: React 19.2.3\n   '---'      WM: Tailwind CSS 4.0`,
+            products: [],
+          };
+        case 'top':
+          return {
+            text: '[RUNNING PROCESSES]\nCPU: 0.5% | MEM: 1.2GB/16GB\n> chatbot_service [ACTIVE]',
+            products: [],
+          };
+        case 'git':
+          return {
+            text: "On branch main\nYour branch is up to date with 'origin/main'.\nnothing to commit, working tree clean",
+            products: [],
+          };
+        case 'uname':
+          return {
+            text: 'Linux DeployOS 5.15.0-generic #1 SMP x86_64 GNU/Linux',
+            products: [],
+          };
+        case 'clear':
+          return {
+            text: '// Buffer limpo. Digite algo para continuar.',
+            products: [],
+          };
+        case 'date':
+          return { text: new Date().toString(), products: [] };
+        case 'echo':
+          return { text: args || '// O que devo repetir?', products: [] };
+        case 'ping':
+          return {
+            text: 'PING deploy.store (127.0.0.1): 56 data bytes\n64 bytes from 127.0.0.1: icmp_seq=0 ttl=64 time=0.042 ms',
+            products: [],
+          };
+        case 'cat':
+          return {
+            text:
+              args === 'products.json'
+                ? JSON.stringify(allProducts.slice(0, 2), null, 2)
+                : `cat: ${args || 'argumento'}: No such file or directory`,
+            products: [],
+          };
+        case 'vim':
+          return {
+            text: '// Você tentou entrar no VIM. Como planeja sair?',
+            products: [],
+          };
+        case 'exit':
+          return {
+            text: 'Sessão terminada. Adeus!',
+            meta: { close: true },
+            products: [],
+          };
+        case 'help':
+          return {
+            text: '// Comandos disponíveis:\n- sudo, whoami, ls, pwd, neofetch, top, git status, clear, date, ping, echo, cat, vim, exit',
+            products: [],
+          };
+        default:
+          return { text: `sh: command not found: ${cmd}`, products: [] };
+      }
+    }
 
     let foundProducts = allProducts.filter(
       (p) =>
@@ -198,18 +311,18 @@ export function Chatbot() {
     if (intent.type === 'price_filter') {
       const { min, max } = intent as { min: number; max: number };
       foundProducts = allProducts.filter(
-        (p) => p.price >= min && p.price <= max,
+        (p) => p.price >= min && (max === null || p.price <= max),
       );
 
       if (foundProducts.length > 0) {
         return {
-          text: `// PRICE_QUERY: ${foundProducts.length} itens entre R$ ${min} e R$ ${max}:`,
+          text: `// PRICE_QUERY: ${foundProducts.length} itens encontrados na faixa de preço:`,
           products: foundProducts.slice(0, 4),
           actions: [{ label: '[ MENOR PREÇO ]', action: 'ordenar barato' }],
         };
       }
       return {
-        text: `// ERROR_404: Nenhum produto nessa faixa (R$ ${min} - R$ ${max}). Tente outro valor.`,
+        text: `// ERROR_404: Nenhum produto nessa faixa. Tente outro valor.`,
         products: [],
         actions: [{ label: '[ VER TUDO ]', action: 'todos' }],
       };
@@ -217,22 +330,19 @@ export function Chatbot() {
 
     if (intent.type === 'recommendation') {
       const topRated = [...allProducts]
-        .sort((a, b) => ((b as any).rating || 0) - ((a as any).rating || 0))
+        .sort((a, b) => (b.stock || 0) - (a.stock || 0))
         .slice(0, 3);
-
       return {
-        text: '// RECOMENDATION_ENGINE: Itens com melhores avaliações carregados.',
+        text: '// RECOMENDATION_ENGINE: Itens sugeridos com base no estoque e popularidade.',
         products: topRated,
-        actions: [{ label: '[ VER MAIS VENDIDOS ]', action: 'todos' }],
+        actions: [{ label: '[ VER TUDO ]', action: 'todos' }],
       };
     }
 
     if (intent.type === 'category_search' && 'category' in intent) {
       const cat = (intent as any).category;
-      const catProducts = allProducts.filter(
-        (p) =>
-          p.category.toLowerCase().includes(cat) ||
-          p.name.toLowerCase().includes(cat),
+      const catProducts = allProducts.filter((p) =>
+        p.category.toLowerCase().includes(cat),
       );
 
       if (catProducts.length > 0) {
@@ -240,9 +350,6 @@ export function Chatbot() {
           text: `cd /loja/${cat} \n// Listando itens relacionados:`,
           products: catProducts.slice(0, 4),
           meta: { setCategory: cat },
-          actions: [
-            { label: `[ + ${cat.toUpperCase()} ]`, action: `mais ${cat}` },
-          ],
         };
       }
     }
@@ -282,10 +389,15 @@ export function Chatbot() {
     setTimeout(() => {
       const response = generateResponse(text, context);
 
-      if (response.meta?.setCategory) {
+      // Lógica para fechar o chat via comando 'exit'
+      if ((response as any).meta?.close) {
+        setTimeout(() => setIsOpen(false), 1000);
+      }
+
+      if ((response as any).meta?.setCategory) {
         setContext((prev) => ({
           ...prev,
-          lastCategory: response.meta.setCategory,
+          lastCategory: (response as any).meta.setCategory,
         }));
       }
 
@@ -297,10 +409,34 @@ export function Chatbot() {
         quickActions: response.actions,
         timestamp: new Date(),
       };
-
       setMessages((prev) => [...prev, botMsg]);
       setIsTyping(false);
     }, 800);
+  };
+
+  const handleRandomCommand = () => {
+    const commands = [
+      'sudo',
+      'neofetch',
+      'ls',
+      'whoami',
+      'pwd',
+      'top',
+      'uname',
+      'git status',
+      'help',
+      'date',
+      'ping',
+      'cat products.json',
+      'vim',
+      'todos',
+      'teclado',
+      'mouse',
+      'monitor',
+      'até 500 reais',
+    ];
+    const random = commands[Math.floor(Math.random() * commands.length)];
+    handleSend(random);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -328,11 +464,7 @@ export function Chatbot() {
           rounded-none 
           mb-[env(safe-area-inset-bottom)] 
           ${isCartOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}
-          ${
-            isOpen
-              ? 'bg-red-600 hover:bg-red-700 text-white border-red-800'
-              : 'bg-black text-white border-black'
-          }
+          ${isOpen ? 'bg-red-600 hover:bg-red-700 text-white border-red-800' : 'bg-black text-white border-black'}
         `}
       >
         {isOpen ? <X className="w-6 h-6" /> : <Terminal className="w-6 h-6" />}
@@ -382,7 +514,7 @@ export function Chatbot() {
               className={`flex flex-col gap-1 max-w-[90%] ${msg.role === 'user' ? 'self-end items-end' : 'self-start items-start'}`}
             >
               <span className="text-[10px] font-mono font-bold text-gray-400 uppercase tracking-wider mb-1">
-                {msg.role === 'user' ? 'USER' : 'SYSTEM'}
+                {msg.role === 'user' ? 'USER' : 'SYSTEM'}{' '}
                 {msg.timestamp.toLocaleTimeString([], {
                   hour: '2-digit',
                   minute: '2-digit',
@@ -391,11 +523,7 @@ export function Chatbot() {
 
               <div
                 className={`p-4 text-xs md:text-sm font-mono leading-relaxed border rounded-none shadow-sm
-                  ${
-                    msg.role === 'user'
-                      ? 'bg-black text-white border-black'
-                      : 'bg-white text-black border-gray-300 border-l-4 border-l-emerald-500'
-                  }
+                  ${msg.role === 'user' ? 'bg-black text-white border-black' : 'bg-white text-black border-gray-300 border-l-4 border-l-emerald-500'}
                 `}
               >
                 <p className="whitespace-pre-wrap">{msg.content}</p>
@@ -479,6 +607,13 @@ export function Chatbot() {
               placeholder="Digite comando..."
               className="flex-1 bg-transparent border-none outline-none text-base md:text-sm py-2 text-black font-mono placeholder:text-gray-400 uppercase"
             />
+            <button
+              onClick={handleRandomCommand}
+              title="Comando aleatório"
+              className="p-2 text-gray-400 hover:text-black transition-colors rounded-none"
+            >
+              <Dices className="w-4 h-4" />
+            </button>
             <button
               onClick={() => handleSend()}
               disabled={!inputValue.trim()}
